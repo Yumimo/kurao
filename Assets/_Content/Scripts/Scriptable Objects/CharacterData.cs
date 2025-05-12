@@ -22,6 +22,32 @@ namespace Kurao
 
         [Tooltip("Maximum falling speed.")]
         public float terminalVelocity = 53.0f;
+
+        [Header("Dash Settings")] 
+        public float dashDelay;
+
+        [Header("Battle Settings")] 
         
+        [Tooltip("Health of the character.")]
+        public float naxHealth = 100f;
+        [Tooltip("Stamina of the character.")]
+        public float maxStamina = 50;
+        [Tooltip("Attack damage of the character.")]
+        public float baseDamage = 0.3f;
+        [Tooltip("Attack speed of the character.")]
+        public float baseAttackSpeed = 1f;
+        [Tooltip("Defence of the character.")]
+        public float baseDefence = 1f;
+
+        
+        public float ComputeDamageTaken(float incomingDamage)
+        {
+            return incomingDamage / (1f + baseDefence);
+        }
+        
+        float ComputeDamageToEnemy(float baseAttackDamage, float enemyDefense)
+        {
+            return baseAttackDamage / (1f + enemyDefense);
+        }
     }
 }

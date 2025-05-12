@@ -2,24 +2,20 @@ using UnityEngine;
 
 namespace Kurao
 {
-    public class PlayerGroundState : PlayerBaseState
+    public class PlayerMoveState : PlayerBaseState
     {
         private float _speed;
 
         #region Animation Hash
 
-        private int _animIDSpeed;
-        private int _animIDMotionSpeed;
+        private readonly int _animIDSpeed;
+        private readonly int _animIDMotionSpeed;
         private float _animationBlend;
 
         #endregion
 
-        public PlayerGroundState(PlayerController player, PlayerStateMachine stateMachine, InputHandler inputHandler,
+        public PlayerMoveState(PlayerController player, PlayerStateMachine stateMachine, InputHandler inputHandler,
             CharacterData characterData) : base(player, stateMachine, inputHandler, characterData)
-        {
-        }
-
-        public override void InitializeAnimationHash()
         {
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDSpeed = Animator.StringToHash("Speed");

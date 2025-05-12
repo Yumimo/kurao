@@ -12,6 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9bba6bad2f995546b10cd664a2fabba, type: 3}
   m_Name: Player Data
   m_EditorClassIdentifier: 
-  movementSpeed: 0
-  sprintSpeed: 0
-  rotationSpeed: 0
+  movementSpeed: 5
+  speedChangeRate: 10
+  rotationSpeed: 0.12
+  gravity: -15
+  terminalVelocity: 53
+  dashDelay: 1
+  naxHealth: 100
+  maxStamina: 50
+  baseDamage: 0.3
+  baseAttackSpeed: 1.5
+  baseDefence: 1

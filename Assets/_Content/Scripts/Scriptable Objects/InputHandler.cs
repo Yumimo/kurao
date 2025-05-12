@@ -9,6 +9,7 @@ namespace Kurao
     {
         public event UnityAction Crouch = delegate { };
         public event UnityAction Attack = delegate { };
+        public event UnityAction Dash = delegate { };
         
         private InputSystem_Actions inputAction;
 
@@ -41,7 +42,12 @@ namespace Kurao
 
         public void OnAttack(InputAction.CallbackContext context)
         {
-
+            switch (context.phase)
+            {
+                case InputActionPhase.Started:
+                    Attack?.Invoke();
+                    break;
+            }
         }
 
         public void OnInteract(InputAction.CallbackContext context)
@@ -75,7 +81,12 @@ namespace Kurao
 
         public void OnSprint(InputAction.CallbackContext context)
         {
-
+            switch (context.phase)
+            {
+                case InputActionPhase.Started:
+                    Dash?.Invoke();
+                    break;
+            }
         }
     }
 }

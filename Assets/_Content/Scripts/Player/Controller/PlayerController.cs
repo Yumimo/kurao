@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Kurao
@@ -19,26 +18,33 @@ namespace Kurao
         #region States
 
         private PlayerStateMachine _stateMachine;
-        public PlayerGroundState GroundedState { get; private set; }
+        public PlayerMoveState MoveState { get; private set; }
+        public PlayerMeleeAttackState MeleeAttackState  { get; private set; }
+        public PlayerDashState DashState { get; private set; }
 
         #endregion
 
         public Animator Animator => m_animator;
         public Vector3 PlayerVelocity => m_characterController.velocity;
         public bool IsGrounded => m_groundChecker.IsGrounded;
+        public float DashDelayCounter { get; set; }
         
         
         private Camera m_camera;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
+  
 
         private void Awake()
         {
             InitializeStates();
             m_camera = Camera.main;
+            m_input.Attack += OnMeleeAttack;
+            m_input.Dash += OnDash;
         }
         private void Update()
         {
+            Counters();
             _stateMachine?.Update();
         }
 
@@ -46,15 +52,33 @@ namespace Kurao
         {
             _stateMachine?.FixedUpdate();
         }
-        
+
+        private void Counters()
+        {
+            DashDelayCounter +=  Time.deltaTime;
+        }
+
         private void InitializeStates()
         {
             _stateMachine = new PlayerStateMachine();
-            GroundedState = new PlayerGroundState(this, _stateMachine, m_input, m_data);
+            MoveState = new PlayerMoveState(this, _stateMachine, m_input, m_data);
+            MeleeAttackState = new PlayerMeleeAttackState(this, _stateMachine, m_input, m_data);
+            DashState = new PlayerDashState(this, _stateMachine, m_input, m_data);
             
-            _stateMachine.ChangeState(GroundedState);
+            _stateMachine.ChangeState(MoveState);
         }
         
+        private void OnMeleeAttack()
+        {
+            _stateMachine.ChangeState(MeleeAttackState);
+        }
+
+        private void OnDash()
+        {
+            if(DashDelayCounter < m_data.dashDelay)return;
+            _stateMachine.ChangeState(DashState);
+        }
+
         public void MoveAndRotate(float speed, float _verticalVelocity)
         {
             var moveDirection = new Vector3(m_input.MoveInput.x, 0, m_input.MoveInput.y).normalized;
@@ -71,6 +95,17 @@ namespace Kurao
             m_characterController.Move(targetDirection.normalized * (speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
-        
+
+        public void Dash(Vector3 _direction)
+        {
+            m_characterController.Move(_direction);
+        }
+
+
+        private void OnDestroy()
+        {
+            m_input.Attack -= OnMeleeAttack;
+            m_input.Dash -= OnDash;
+        }
     }
 }

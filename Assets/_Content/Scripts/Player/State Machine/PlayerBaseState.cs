@@ -21,7 +21,6 @@ namespace Kurao
         public virtual void Enter()
         {
             Debug.Log($"Enter State: {this.GetType().Name})");
-            InitializeAnimationHash();
         }
 
         public virtual void Exit()
@@ -42,9 +41,5 @@ namespace Kurao
             }
         }
 
-        public virtual void InitializeAnimationHash()
-        {
-            
-        }
     }
 }
