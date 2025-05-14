@@ -27,20 +27,20 @@ namespace Kurao
         public Animator Animator => m_animator;
         public Vector3 PlayerVelocity => m_characterController.velocity;
         public bool IsGrounded => m_groundChecker.IsGrounded;
-        public float DashDelayCounter { get; set; }
+
+        public bool CanDash => _dashDelayCounter > m_data.dashDelay;
         
         
         private Camera m_camera;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
-  
+        private float _dashDelayCounter;
+
 
         private void Awake()
         {
             InitializeStates();
             m_camera = Camera.main;
-            m_input.Attack += OnMeleeAttack;
-            m_input.Dash += OnDash;
         }
         private void Update()
         {
@@ -55,7 +55,7 @@ namespace Kurao
 
         private void Counters()
         {
-            DashDelayCounter +=  Time.deltaTime;
+            _dashDelayCounter +=  Time.deltaTime;
         }
 
         private void InitializeStates()
@@ -68,16 +68,6 @@ namespace Kurao
             _stateMachine.ChangeState(MoveState);
         }
         
-        private void OnMeleeAttack()
-        {
-            _stateMachine.ChangeState(MeleeAttackState);
-        }
-
-        private void OnDash()
-        {
-            if(DashDelayCounter < m_data.dashDelay)return;
-            _stateMachine.ChangeState(DashState);
-        }
 
         public void MoveAndRotate(float speed, float _verticalVelocity)
         {
@@ -96,16 +86,19 @@ namespace Kurao
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
 
+        #region Dash
+
         public void Dash(Vector3 _direction)
         {
             m_characterController.Move(_direction);
         }
 
-
-        private void OnDestroy()
+        public void ResetDash()
         {
-            m_input.Attack -= OnMeleeAttack;
-            m_input.Dash -= OnDash;
+            _dashDelayCounter = 0;
         }
+        
+        #endregion
+        
     }
 }

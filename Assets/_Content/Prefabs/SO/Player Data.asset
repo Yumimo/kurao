@@ -18,6 +18,7 @@ MonoBehaviour:
   gravity: -15
   terminalVelocity: 53
   dashDelay: 1
+  dashLength: 0.3
   naxHealth: 100
   maxStamina: 50
   baseDamage: 0.3

@@ -21,6 +21,13 @@ namespace Kurao
             _animIDSpeed = Animator.StringToHash("Speed");
         }
 
+        public override void Enter()
+        {
+            base.Enter();
+            _inputHandler.Dash += OnDash;
+            _inputHandler.Attack += OnMeleeAttack;
+        }
+
         public override void Update()
         {
             base.Update();
@@ -36,6 +43,13 @@ namespace Kurao
             _player.MoveAndRotate(_speed, verticalVelocity);
 
             UpdateAnimator(_speed, inputMagnitude);
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            _inputHandler.Dash -= OnDash;
+            _inputHandler.Attack -= OnMeleeAttack;
         }
 
         private float CalculateTargetSpeed(Vector2 input)
@@ -74,6 +88,19 @@ namespace Kurao
 
             return newSpeed;
         }
+        
+        
+        private void OnDash()
+        {
+            if(!_player.CanDash)return;
+            _stateMachine.ChangeState(_player.DashState);
+        }
+        
+        private void OnMeleeAttack()
+        {
+            _stateMachine.ChangeState(_player.MeleeAttackState);
+        }
+
 
         private float UpdateAnimationBlend(float targetSpeed)
         {

@@ -25,7 +25,8 @@ namespace Kurao
 
         [Header("Dash Settings")] 
         public float dashDelay;
-
+        public float dashLength;
+        
         [Header("Battle Settings")] 
         
         [Tooltip("Health of the character.")]

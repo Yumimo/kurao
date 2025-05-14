@@ -26,8 +26,7 @@ namespace Kurao
 
             _player.Animator.SetBool(_animIdDash, true);
 
-            var dashAnimLength = GetDashAnimationLength();
-            _dashTimer = new Timer(dashAnimLength);
+            _dashTimer = new Timer(_characterData.dashLength);
             _dashTimer.OnTimerCompleted += OnDashComplete;
             _dashTimer.Start();
         }
@@ -43,7 +42,7 @@ namespace Kurao
         public override void Exit()
         {
             base.Exit();
-            _player.DashDelayCounter = 0;
+            _player.ResetDash();
             _dashTimer.OnTimerCompleted -= OnDashComplete;
         }
 
@@ -52,12 +51,6 @@ namespace Kurao
             _stateMachine.ChangeState(_player.MoveState);
             _player.Animator.SetBool(_animIdDash, false);
         }
-
-        private float GetDashAnimationLength()
-        {
-            var stateInfo = _player.Animator.GetCurrentAnimatorStateInfo(0);
-            return stateInfo.IsName("Dash") ? stateInfo.length : 0.2f;
-        }
-    
+        
     }
 }
