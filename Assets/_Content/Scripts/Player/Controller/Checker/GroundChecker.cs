@@ -10,7 +10,7 @@ namespace Kurao
         public bool IsGrounded { get; private set; }
         private void Update()
         {
-            IsGrounded = Physics.CheckSphere(transform.position, m_radius, m_groundLayer);
+            IsGrounded = Physics.Raycast(transform.position, Vector3.down, m_radius, m_groundLayer);
         }
 
         private void OnDrawGizmosSelected()
