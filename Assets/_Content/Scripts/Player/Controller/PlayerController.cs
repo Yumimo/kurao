@@ -67,29 +67,43 @@ namespace Kurao
             
             _stateMachine.ChangeState(MoveState);
         }
-        
+
+        public void SetInteractable(IInteract interact)
+        {
+            
+        }
 
         public void MoveAndRotate(float speed, float _verticalVelocity)
         {
-            var moveDirection = new Vector3(m_input.MoveInput.x, 0, m_input.MoveInput.y).normalized;
+            var inputDir = new Vector3(m_input.MoveInput.x, 0, m_input.MoveInput.y).normalized;
 
-            if (m_input.MoveInput != Vector2.zero)
-            {
-                _targetRotation = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg +
-                                  m_camera.transform.eulerAngles.y;
-                var rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    m_data.rotationSpeed);
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            }
+            if (inputDir == Vector3.zero)
+                return;
+
+            _targetRotation = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + m_camera.transform.eulerAngles.y;
+            var rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, m_data.rotationSpeed);
+            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+
             var targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+            
+            if (!IsGrounded)
+            {
+                var dot = Vector3.Dot(targetDirection.normalized, transform.forward);
+                if (dot > 0.5f)
+                {
+                    targetDirection = Vector3.zero;
+                }
+            }
+
             m_characterController.Move(targetDirection.normalized * (speed * Time.deltaTime) +
-                             new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+                                       new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
 
         #region Dash
 
         public void Dash(Vector3 _direction)
         {
+            if(!IsGrounded)return;
             m_characterController.Move(_direction);
         }
 
